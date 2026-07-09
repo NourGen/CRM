@@ -31,7 +31,7 @@ export class AcademyPost {
   @Column({ type: 'text', nullable: true })
   content: string;
 
-  @Column({ name: 'parent_id', type: 'uuid', nullable: true })
+  @Column({ name: 'parent_id', type: 'varchar', length: 36, nullable: true })
   parentId: string;
 
   @ManyToOne(() => AcademyPost, (post) => post.replies, { nullable: true, onDelete: 'CASCADE' })

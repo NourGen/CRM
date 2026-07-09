@@ -23,7 +23,7 @@ export class User {
   @Column({ type: 'boolean', default: true })
   active: boolean;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   permissions: string[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })

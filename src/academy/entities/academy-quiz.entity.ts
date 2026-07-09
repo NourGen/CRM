@@ -27,7 +27,7 @@ export class AcademyQuiz {
   @Column({ name: 'lecture_name', type: 'varchar', nullable: true })
   lectureName: string;
 
-  @Column({ name: 'questions_json', type: 'jsonb', nullable: true })
+  @Column({ name: 'questions_json', type: 'simple-json', nullable: true })
   questionsJson: any;
 
   @Column({ name: 'pass_score', type: 'integer', nullable: true })

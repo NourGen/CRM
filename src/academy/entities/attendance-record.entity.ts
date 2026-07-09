@@ -19,10 +19,10 @@ export class AttendanceRecord {
   @Column({ name: 'student_name', type: 'varchar', nullable: true })
   studentName: string;
 
-  @Column({ name: 'attended_list', type: 'jsonb', nullable: true })
+  @Column({ name: 'attended_list', type: 'simple-json', nullable: true })
   attendedList: string[];
 
-  @Column({ name: 'tasks_list', type: 'jsonb', nullable: true })
+  @Column({ name: 'tasks_list', type: 'simple-json', nullable: true })
   tasksList: string[];
 
   @Column({ name: 'last_updated', type: 'timestamp', nullable: true })

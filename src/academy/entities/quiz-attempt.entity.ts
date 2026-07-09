@@ -24,7 +24,7 @@ export class QuizAttempt {
   @JoinColumn({ name: 'lecture_id' })
   lecture: AcademyContent;
 
-  @Column({ name: 'questions_json', type: 'jsonb', nullable: true })
+  @Column({ name: 'questions_json', type: 'simple-json', nullable: true })
   questionsJson: any;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
