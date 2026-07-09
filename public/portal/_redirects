@@ -1,0 +1,5 @@
+# Cloudflare Pages Redirects File
+# This file is used if you choose to deploy the frontend separately on Cloudflare Pages.
+# Replace 'https://your-backend-api-domain.com' with your actual VPS backend API URL (e.g., Railway or custom domain).
+
+/gas/* https://your-backend-api-domain.com/gas/:splat 200
