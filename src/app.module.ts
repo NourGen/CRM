@@ -20,7 +20,7 @@ const isProduction = process.env.NODE_ENV === 'production';
       password: process.env.DB_PASSWORD || '',
       database: process.env.DB_NAME || 'bsa_crm',
       autoLoadEntities: true,
-      synchronize: !isProduction, // false in production
+      synchronize: true, // creates tables on first run - set to false after first startup
       charset: 'utf8mb4',
     }),
     SalesModule,
