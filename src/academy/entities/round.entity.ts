@@ -32,6 +32,18 @@ export class Round {
   @Column({ name: 'instructor_name', type: 'varchar', nullable: true })
   instructorName: string;
 
+  @Column({ name: 'offer_price', type: 'decimal', precision: 10, scale: 2, nullable: true })
+  offerPrice: number;
+
+  @Column({ name: 'offer_expiry', type: 'timestamp', nullable: true })
+  offerExpiry: Date;
+
+  @Column({ name: 'deleted_by', type: 'varchar', nullable: true })
+  deletedBy: string;
+
+  @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
+  deletedAt: Date;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
   createdAt: Date;
 }

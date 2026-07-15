@@ -9,7 +9,7 @@ export class AcademyLedger {
   @Column({ name: 'booking_date', type: 'timestamp', nullable: true })
   bookingDate: Date;
 
-  @Column({ name: 'oc_code', type: 'varchar', nullable: true, unique: true })
+  @Column({ name: 'oc_code', type: 'varchar', nullable: true })
   ocCode: string;
 
   @Column({ name: 'client_name', type: 'varchar', nullable: true })

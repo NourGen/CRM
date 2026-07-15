@@ -7,7 +7,7 @@ export class ClientPayment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'legacy_id', type: 'varchar', nullable: true, unique: true })
+  @Column({ name: 'legacy_id', type: 'varchar', nullable: true })
   legacyId: string; // OC Code or client payment ID
 
   @Column({ name: 'agent_legacy_id', type: 'varchar', nullable: true })

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BSA Invoice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Montserrat:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="invoice-page">
+      <!-- ====== LEFT SIDEBAR ====== -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h1>INVOICE</h1>
+          <!-- HERE claude.ai -->
+          <div class="meta-label">Invoice# : OC-code</div>
+          <div class="meta-label">Date : the date of the Invoice</div>
+        </div>
+
+        <div class="sidebar-spacer"></div>
+
+        <div class="sidebar-contact">
+          <!-- Location -->
+          <div class="contact-item location-item">
+            <div class="icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"
+                />
+              </svg>
+            </div>
+            <span>6 أكتوبر - ميدان المصري - برج الفيروز 1 - الدور الرابع</span>
+          </div>
+
+          <!-- Phone / Brand -->
+          <div class="contact-item">
+            <div class="icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1.003 1.003 0 0 1 1.01-.24c1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+                />
+              </svg>
+            </div>
+            <span>B-S-A</span>
+          </div>
+
+          <!-- Instagram -->
+          <div class="contact-item">
+            <div class="icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"
+                />
+              </svg>
+            </div>
+            <span>bsa.officially</span>
+          </div>
+
+          <!-- TikTok -->
+          <div class="contact-item">
+            <div class="icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .56.04.81.1v-3.5a6.37 6.37 0 0 0-.81-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.71a8.35 8.35 0 0 0 4.76 1.49v-3.5a4.84 4.84 0 0 1-1-.01z"
+                />
+              </svg>
+            </div>
+            <span>bsa.officially</span>
+          </div>
+
+          <!-- Email -->
+          <div class="contact-item">
+            <div class="icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"
+                />
+              </svg>
+            </div>
+            <span>info@b-s-a.co</span>
+          </div>
+
+          <!-- Website -->
+          <div class="contact-item">
+            <div class="icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
+                />
+              </svg>
+            </div>
+            <span>www.b-s-a.co</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== RIGHT MAIN CONTENT ====== -->
+      <div class="main-content">
+        <!-- Logo header -->
+        <div class="main-header">
+          <div class="logo-container">
+            <div class="logo-position w-logo">
+              <img src="nour/invoice-new3.png" alt="" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Grey detail area (for line items) -->
+         <!-- HERE claude.ai i want the input display here -->
+        <div class="detail-area" style="direction: ltr;">
+          <div class="container d-flex" style="padding: 1rem 0.5rem;">
+            <div class="d-flex-col" style="width: 55%;">
+              <div class="detail-text"><span>Name : </span>name of the client </div>
+              <div class="detail-text"><span>Phone : </span>phone number of the client</div>
+              <div class="detail-text"><span>Course : </span>name of the course </div>
+              <div class="detail-text"><span>Offer : </span>type of the offer </div>
+              <div class="detail-text"><span>Attendance Time : </span>the time of  </div>
+            </div>
+            <div class="d-flex-col" style="width: 45%;">
+              <div class="detail-text left-border"><span>Course Price : </span>4000 </div>
+              <div class="detail-text left-border"><span>Paid Amount : </span>2000 </div>
+              <div class="detail-text left-border"><span>Remaining Amount : </span>2000 </div>
+              <div class="detail-text left-border"><span>Payment Method : </span>cash </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Policies section -->
+        <div class="policies-section realative">
+          <h2 class="policies-title">Policies</h2>
+
+          <div class="policies-grid">
+            <!-- RIGHT COLUMN -->
+            <div class="policies-col-right">
+              <div class="policy-block">
+                <h3>الالتزام بالمواعيد</h3>
+                <p>
+                  يلتزم المتدرب بالحضور في المواعيد المحددة للكورس<br />
+                  لا يُسمح بالتأخر أو الانصراف المبكر المتكرر وفي حالة حدوث خلاف
+                  ذلك يتحمل المتدرب المسؤوليه كاملة
+                </p>
+              </div>
+              <div class="policy-block">
+                <h3>المواد التعليمية</h3>
+                <p>
+                  جميع المواد والمحتويات التعليمية خاصة بالأكاديمية<br />
+                  يُمنع تصوير أو تسجيل المحاضرات أو إعادة توزيعها بدون إذن رسمي
+                </p>
+              </div>
+              <div class="policy-block">
+                <h3>الانضباط والسلوك</h3>
+                <p>
+                  يلتزم المتدرب بالاحترام المتبادل مع المحاضرين والزملاء<br />
+                  أي سلوك غير لائق يعرّض المتدرب للاستبعاد دون استرداد الرسوم
+                </p>
+              </div>
+              <div class="policy-block">
+                <h3>الغياب</h3>
+                <p>
+                  يجب إخطار الإدارة مسبقًا في حالة الغياب<br />
+                  لا يحق للمتدرب استرداد قيمة المحاضرة أو تعويضها إلا في حالة
+                  إلغاء المحاضرة من قبل الأكاديمية
+                </p>
+              </div>
+              <div class="policy-block">
+                <h3>التاسك والتطبيق العملي</h3>
+                <p>
+                  إنجاز التاسكات والكويزات الخاصة بكل محاضرة شرط أساسي لفتح
+                  المحاضرات التالية على البورتال، وذلك لضمان متابعة مستوى
+                  المتدرب والحفاظ على جودة التعلم<br />
+                  لا يحق للمتدرب طلب استرداد قيمة الكورس بعد بدايته للاعتراض على
+                  هذا النظام، حيث إنه لا يمس المتدرب بأي ضرر بل يهدف لمساعدته
+                  على تحقيق النجاح داخل الأكاديمية، عدم الالتزام بهذا البند يؤثر
+                  بالكامل علي الشهاده المستلمه
+                </p>
+              </div>
+            </div>
+
+            <!-- LEFT COLUMN -->
+            <div class="policies-col-left">
+              <div class="policy-block">
+                <h3>الرسوم</h3>
+                <p>
+                  يتم دفع رسوم الكورس كاملة/أو حسب النظام المتفق عليه قبل بدء
+                  الدراسة<br />
+                  في حالة عدم التزام المتدرب بنظام الدفع أو شروط الاتفاق المتفق
+                  عليها قبل بداية الكورس، تتبع الأكاديمية النظام التالي<br />
+                  <strong>الإنذار الأول:</strong> يُرسل عبر الواتساب لتنبيه
+                  المتدرب بضرورة الالتزام بالاتفاق<br />
+                  <strong>الإنذار الثاني:</strong> في حالة عدم الاستجابة، يتم
+                  إيقاف حساب المتدرب داخل الأكاديمية وسحب أي مواد تعليمية خاصة
+                  بالكورس<br />
+                  <strong>الإنذار الثالث:</strong> في حالة استمرار عدم الالتزام،
+                  يتم إخراج المتدرب من جروب الواتساب وإيقاف الكورس نهائيًا دون
+                  استرداد الرسوم
+                </p>
+              </div>
+              <div class="policy-block">
+                <h3>سياسة التغيير والإلغاء</h3>
+                <p>
+                  يحق للأكاديمية تعديل مواعيد أو محتوى الكورس مع إخطار المتدربين
+                  مسبقًا<br />
+                  في حالة إلغاء الكورس من جانب الأكاديمية يتم رد الرسوم كاملة<br />
+                  لا يحق للمتدرب طلب استرداد قيمة الكورس بعد الحجز إذا تم ذلك
+                  خلال 7 أيام أو أقل قبل بداية الكورس في الموعد المحدد مسبقا،
+                  باعتبار الحجز في هذه الحالة قد دخل حيز التنفيذ<br />
+                  في حالة بدء الكورس، يحق للمتدرب طلب الاسترداد خلال 48 ساعة فقط
+                  من تاريخ المحاضرة الأولى، وذلك إذا تعذر على الأكاديمية الوفاء
+                  بالمحتوى أو المتطلبات المتفق عليها ولا يُقبل أي طلب استرداد
+                  بعد مرور هذه المدة<br />
+                  يتم طلب الاسترداد عبر تقديم طلب رسمي للقسم المختص، ثم إرساله
+                  عبر البريد الإلكتروني موضحًا فيه سبب الاسترداد، والرقم أو
+                  الوسيلة المناسبة لاستلام المبلغ المسترد ويتم رد المبلغ بعد
+                  المراجعه والموافقه عليه خلال 72 ساعة عمل<br />
+                  أقصى مدة للتأجيل هي ثلاثة أشهر ويتم إلغاء الفاتورة بعدها، وعند
+                  طلب رد المبلغ يتم خصم نسبة إدارية وقدرها 14% من إجمالي
+                  الفاتورة
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div style="width: 50%" class="absoulute">
+            <img src="nour/5tm.png" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

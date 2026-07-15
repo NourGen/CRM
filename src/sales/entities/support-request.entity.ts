@@ -42,4 +42,13 @@ export class SupportRequest {
 
   @Column({ name: 'resolved_at', type: 'timestamp', nullable: true })
   resolvedAt: Date;
+
+  @Column({ name: 'supporter_id', type: 'varchar', nullable: true })
+  supporterId: string;
+
+  @Column({ name: 'supporter_name', type: 'varchar', nullable: true })
+  supporterName: string;
+
+  @Column({ type: 'boolean', default: false })
+  hidden: boolean;
 }

@@ -14,6 +14,12 @@ export class Task {
   @Column({ type: 'varchar', nullable: true })
   status: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  priority: string;
+
+  @Column({ name: 'agent_id', type: 'varchar', nullable: true })
+  agentId: string;
+
   @Column({ type: 'timestamp', nullable: true })
   time: Date;
 }

@@ -1,12 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>BSA Academy CRM</title>
+  <link rel="icon" type="image/png" href="/bsa-icon.png">
+  <link rel="apple-touch-icon" href="/bsa-icon.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
   <script>
     // Google Apps Script Compatibility Adapter for NestJS backend
@@ -1226,6 +1229,19 @@
 
     /* ══ MOBILE ══ */
     @media(max-width:768px) {
+      body, html {
+        overflow-x: hidden !important;
+        max-width: 100% !important;
+      }
+      .main {
+        overflow-x: hidden !important;
+        max-width: 100% !important;
+      }
+      .card, .acc-card {
+        overflow-x: auto !important;
+        max-width: 100% !important;
+        -webkit-overflow-scrolling: touch;
+      }
       .sidebar {
         transform: translateX(110%);
         transition: transform .28s cubic-bezier(.4,0,.2,1);
@@ -2003,7 +2019,7 @@
 
   <!-- LOGIN -->
   <div id="loginWrap" class="login-wrap" style="display:none">
-    <div class="login-card">
+    <form class="login-card" onsubmit="event.preventDefault(); doLogin();">
       <div class="login-logo" style="margin-bottom: 25px; text-align: center;">
         <div id="loginLogoContainer"
           style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
@@ -2014,17 +2030,16 @@
       </div>
       <div class="form-group">
         <label class="form-label">اسم المستخدم</label>
-        <input id="loginUser" class="form-input" placeholder="اسم المستخدم...">
+        <input id="loginUser" name="username" autocomplete="username" class="form-input" placeholder="اسم المستخدم...">
       </div>
       <div class="form-group">
         <label class="form-label">كلمة المرور</label>
-        <input id="loginPass" type="password" class="form-input" placeholder="••••••"
-          onkeydown="if(event.key==='Enter')doLogin()">
+        <input id="loginPass" name="password" autocomplete="current-password" type="password" class="form-input" placeholder="••••••">
       </div>
-      <button class="btn btn-primary btn-full" onclick="doLogin()">
+      <button type="submit" class="btn btn-primary btn-full">
         <span id="loginBtnTxt"><i class="ti ti-login"></i> دخول</span>
       </button>
-    </div>
+    </form>
   </div>
 
   <!-- APP -->
@@ -2465,9 +2480,9 @@
             </div>
             <div id="fuDateWrap" class="form-group" style="display:none">
               <label class="form-label">📅 موعد المتابعة (تاريخ وساعة)</label>
-              <div style="display:flex;gap:8px">
-                <input type="date" id="callFuDate" class="form-input" style="flex:1">
-                <input type="time" id="callFuTime" class="form-input" style="width:115px" value="09:00">
+              <div style="display:flex;gap:8px;align-items:stretch">
+                <input type="date" id="callFuDate" class="form-input" style="flex:1;min-width:0;height:42px">
+                <input type="time" id="callFuTime" class="form-input" style="width:145px;flex:none;height:42px" value="09:00">
               </div>
             </div>
             <div id="fuTypeWrap" class="form-group" style="display:none;margin-top:4px">
@@ -2661,6 +2676,13 @@
             <span class="badge badge-del" id="fuCntUp">0 قادم</span>
           </div>
         </div>
+        <div id="fuPageFilterRow" style="margin-bottom:10px;padding:8px 14px;background:#fff8f0;border-radius:10px;border:1px solid #ffe0b2;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+          <span style="font-size:12px;color:#e65100;font-weight:700">🌡️ النوع:</span>
+          <button id="fuPg-all"  class="fu-sub-btn active" onclick="filterFollowUpsType('all',this)">الكل &nbsp;<span id="fuPgCnt-all"  style="background:rgba(0,0,0,.15);border-radius:8px;padding:0 5px">0</span></button>
+          <button id="fuPg-hot"  class="fu-sub-btn"        onclick="filterFollowUpsType('hot',this)">🔥 Hot &nbsp;<span id="fuPgCnt-hot"  style="background:rgba(0,0,0,.15);border-radius:8px;padding:0 5px">0</span></button>
+          <button id="fuPg-warm" class="fu-sub-btn"        onclick="filterFollowUpsType('warm',this)">⚪ عادي &nbsp;<span id="fuPgCnt-warm" style="background:rgba(0,0,0,.15);border-radius:8px;padding:0 5px">0</span></button>
+          <button id="fuPg-cold" class="fu-sub-btn"        onclick="filterFollowUpsType('cold',this)">🧊 Cold &nbsp;<span id="fuPgCnt-cold" style="background:rgba(0,0,0,.15);border-radius:8px;padding:0 5px">0</span></button>
+        </div>
         <div class="card">
           <div class="card-title"><i class="ti ti-alert-circle" style="color:#c04040"></i> متأخرة</div>
           <div id="fuOverdue"></div>
@@ -2721,7 +2743,7 @@
           <button class="filter-btn" onclick="filterLeads('Wrong Number',this)">Wrong Number</button>
         </div>
         <div id="fuSubFilterRow" style="display:none;margin-bottom:10px;padding:8px 14px;background:#fff8f0;border-radius:10px;border:1px solid #ffe0b2;flex-wrap:wrap;gap:8px;align-items:center">
-          <span style="font-size:12px;color:#e65100;font-weight:700">🌡️ نوع الفولو:</span>
+          <span style="font-size:12px;color:#e65100;font-weight:700">🌡️ النوع:</span>
           <button id="fuSub-all"  class="fu-sub-btn active" onclick="filterFuType('all',this)" >الكل &nbsp;<span id="fuSubCnt-all"  style="background:rgba(0,0,0,.15);border-radius:8px;padding:0 5px">0</span></button>
           <button id="fuSub-hot"  class="fu-sub-btn"        onclick="filterFuType('hot',this)" >🔥 Hot &nbsp;<span id="fuSubCnt-hot"  style="background:rgba(0,0,0,.15);border-radius:8px;padding:0 5px">0</span></button>
           <button id="fuSub-warm" class="fu-sub-btn"        onclick="filterFuType('warm',this)">⚪ عادي &nbsp;<span id="fuSubCnt-warm" style="background:rgba(0,0,0,.15);border-radius:8px;padding:0 5px">0</span></button>
@@ -2849,6 +2871,13 @@
               </div>
             </div>
             
+            <div id="invFreeRow" style="display:none; margin-bottom:14px; padding:12px 16px; background:#eef7ee; border:1px solid #cfe8cf; border-radius:10px;">
+              <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:700; color:#1b5e20; margin:0;">
+                <input type="checkbox" id="invFree" onchange="onInvFreeToggle()" style="width:18px; height:18px; cursor:pointer;">
+                🎁 فاتورة مجانية بالكامل — كود خاص (OC-2xxxxx) · للمدير فقط
+              </label>
+            </div>
+
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">إجمالي السعر <span style="color:red">*</span></label>
@@ -2916,8 +2945,8 @@
               </div>
             </div>
             
-            <button class="btn btn-primary btn-full btn-lg" onclick="openPrefilledGoogleForm(event)" style="margin-top: 15px; font-weight:700;" title="فتح نموذج جوجل الرسمي لتوليد ملف الـ PDF وحفظه في درايف">
-              <i class="ti ti-external-link"></i> إصدار الفاتورة وتعبئتها في جوجل فورم
+            <button class="btn btn-primary btn-full btn-lg" onclick="doCreateDirectInvoice()" style="margin-top: 15px; font-weight:700;" title="إصدار الفاتورة داخل النظام وإرسالها بالبريد الإلكتروني تلقائياً">
+              <i class="ti ti-file-invoice"></i> إصدار الفاتورة وإرسالها بالإيميل
             </button>
           </div>
           
@@ -2926,8 +2955,8 @@
             <div class="card" style="padding: 20px; border-radius: 12px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
               <div class="card-title" style="font-size:15px; font-weight:700; color:var(--bd);"><i class="ti ti-info-circle"></i> إرشادات الاستخدام</div>
               <ul style="font-size:13px; color:var(--bm); line-height:1.6; padding-right:20px; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
-                <li>سيقوم النظام تلقائياً بإضافة بيانات العميل لشيت الفواتير الخارجي.</li>
-                <li>سيتم إرسال الفاتورة عبر البريد الإلكتروني للعميل تلقائياً في الخلفية.</li>
+                <li>سيتم تسجيل الفاتورة تلقائياً في دفتر الحسابات الرئيسي بكود OC جديد.</li>
+                <li>سيتم إرسال الفاتورة عبر البريد الإلكتروني تلقائياً في الخلفية.</li>
                 <li>يتم حفظ العميل وتسكينه في الحسابات والأقساط والراوند تلقائياً فور إصدار الفاتورة.</li>
               </ul>
             </div>
@@ -3407,6 +3436,7 @@
                 <th>الاسم</th>
                 <th>المستخدم</th>
                 <th>الدور</th>
+                <th>الجيميل</th>
                 <th>الحالة</th>
                 <th>الصفحات</th>
                 <th>إجراء</th>
@@ -3643,7 +3673,7 @@
       <div class="page" id="page-academy-mgmt">
         <div class="page-header">
           <div class="page-title"><i class="ti ti-school"></i> إدارة الأكاديمية</div>
-          <button class="btn btn-gold btn-sm" onclick="window.open('https://b-s-a.co/portal-academy-student/','_blank')"><i class="ti ti-external-link"></i> فتح بوابة الطلاب</button>
+          <button class="btn btn-gold btn-sm" onclick="window.open('https://portal.b-s-a.co/academy-student/','_blank')"><i class="ti ti-external-link"></i> فتح بوابة الطلاب</button>
         </div>
 
         <!-- Stats Row -->
@@ -4541,7 +4571,7 @@
             <div id="finSnapCleanResult" style="margin-top:10px"></div>
           </div>
 
-          <div class="card">
+          <div class="card" style="display:none">
             <div class="card-title"><i class="ti ti-database"></i> إعدادات شيت الفريش واللوجو</div>
             <div class="form-group">
               <label class="form-label">Distribution Sheet ID</label>
@@ -4559,7 +4589,7 @@
             <button class="btn btn-gold btn-full" style="margin-top: 10px" onclick="saveSheetIds()">حفظ
               الإعدادات</button>
           </div>
-          <div class="card">
+          <div class="card" style="display:none">
             <div class="card-title"><i class="ti ti-mail"></i> التقرير اليومي</div>
             <p style="font-size:12px;color:var(--bm);margin-bottom:12px">التقرير يُرسل تلقائياً كل يوم الساعة 11:59 مساءً</p>
             <button class="btn btn-primary btn-full" style="margin-bottom:8px" onclick="setupDailyReport()"><i
@@ -4567,7 +4597,7 @@
             <button class="btn btn-outline btn-full" onclick="sendReportNow()"><i class="ti ti-send"></i> إرسال التقرير
               الآن</button>
           </div>
-          <div class="card">
+          <div class="card" style="display:none">
             <div class="card-title"><i class="ti ti-upload"></i> استيراد البيانات التاريخية</div>
             <p style="font-size:12px;color:var(--bm);margin-bottom:12px">استيراد حسابات العملاء التاريخية من شيت "حركة العملاء 2026" الخارجي لدفتر الحسابات الرئيسي.</p>
             <div class="form-group">
@@ -4589,7 +4619,7 @@
             <div id="healthCheckResult" style="margin-top:10px;font-size:12px;max-height:250px;overflow-y:auto"></div>
           </div>
 
-          <div class="card" style="border:2px solid #e09000;">
+          <div class="card" style="display:none;border:2px solid #e09000;">
             <div class="card-title"><i class="ti ti-transfer"></i> ترحيل OC Code (إصلاح البيانات)</div>
             <p style="font-size:12px;color:var(--bm);margin-bottom:12px">
               هذه العملية تنقل أي كود OC موجود في عمود الكامبين (M) إلى العمود المخصص له (N) في Raw_Data.
@@ -4609,13 +4639,13 @@
               <button onclick="openUnifiedRecycleBin()" class="btn btn-outline btn-full" style="color:#c04040;border-color:#c04040;justify-content:flex-start;gap:8px;">
                 <i class="ti ti-trash"></i> سلة المهملات
               </button>
-              <button id="btnAutoSyncOc" onclick="doAutoSyncOcCodes()" class="btn btn-outline btn-full" style="color:#1565c0;border-color:#1565c0;justify-content:flex-start;gap:8px;" title="مزامنة أكواد OC تلقائياً من شيت الفواتير">
+              <button id="btnAutoSyncOc" onclick="doAutoSyncOcCodes()" class="btn btn-outline btn-full" style="display:none;color:#1565c0;border-color:#1565c0;justify-content:flex-start;gap:8px;" title="مزامنة أكواد OC تلقائياً من شيت الفواتير">
                 <i class="ti ti-refresh"></i> مزامنة OC
               </button>
-              <button id="btnFixDupIds" onclick="doFixDuplicatePayIds()" class="btn btn-outline btn-full" style="color:#6a1b9a;border-color:#6a1b9a;justify-content:flex-start;gap:8px;" title="فحص وإصلاح كل IDs المكررة أو الفاضية في السيستم">
+              <button id="btnFixDupIds" onclick="doFixDuplicatePayIds()" class="btn btn-outline btn-full" style="display:none;color:#6a1b9a;border-color:#6a1b9a;justify-content:flex-start;gap:8px;" title="فحص وإصلاح كل IDs المكررة أو الفاضية في السيستم">
                 <i class="ti ti-shield-check"></i> إصلاح IDs الشامل
               </button>
-              <button id="btnRepairMyLeads" onclick="doRepairMyLeads()" class="btn btn-outline btn-full" style="color:#bf360c;border-color:#bf360c;justify-content:flex-start;gap:8px;" title="إصلاح Client IDs و Agent IDs في My_Leads و Financial_Data">
+              <button id="btnRepairMyLeads" onclick="doRepairMyLeads()" class="btn btn-outline btn-full" style="display:none;color:#bf360c;border-color:#bf360c;justify-content:flex-start;gap:8px;" title="إصلاح Client IDs و Agent IDs في My_Leads و Financial_Data">
                 <i class="ti ti-users-group"></i> إصلاح My_Leads بعد إصلاح IDs
               </button>
               <button onclick="doFindOrphans()" class="btn btn-outline btn-full" style="color:#e65100;border-color:#e65100;justify-content:flex-start;gap:8px;" title="عرض عملاء My_Leads اللي مش موجود تليفونهم في Raw_Data">
@@ -5336,8 +5366,10 @@
       </div>
       <div id="invoicePreviewHtml"
         style="direction:rtl; text-align:right; overflow:auto; max-height:70vh; background:#f5ede3;"></div>
+      <div id="invEmailStatus" style="padding:10px 24px; font-size:13px; font-weight:600; text-align:center;"></div>
       <div style="display:flex; gap:10px; padding:16px 24px; background:#fff; border-top:1px solid #f0e8dc;">
-        <button class="btn btn-primary" onclick="downloadInvoicePng()"><i class="ti ti-download"></i> تحميل الفاتورة (PNG)</button>
+        <button class="btn btn-primary" onclick="downloadInvoicePdf()"><i class="ti ti-download"></i> تحميل الفاتورة (PDF)</button>
+        <button class="btn btn-outline" onclick="resendInvoiceEmail()"><i class="ti ti-mail"></i> إعادة إرسال الإيميل</button>
         <button class="btn btn-outline" onclick="closeModal('modalInvoicePreview')">إغلاق</button>
       </div>
     </div>
@@ -5887,7 +5919,7 @@
       }
 
       // Prefill Sales Email
-      var savedEmail = localStorage.getItem('invAgentEmail');
+      var savedEmail = ((CU && CU.email) || localStorage.getItem('invAgentEmail'));
       var emailInput = document.getElementById('invAgentEmail');
       if (emailInput && savedEmail) {
         emailInput.value = savedEmail;
@@ -7515,15 +7547,43 @@
     // ============================================================
     // FOLLOW UPS
     // ============================================================
+    var _fuPageType = 'all';
+    var _fuRawDue = [], _fuRawUpcoming = [];
+    function _fuTypeOf(f) {
+      var n = (f.notes || '').toString();
+      if (n.indexOf('[HOT]') !== -1) return 'hot';
+      if (n.indexOf('[COLD]') !== -1) return 'cold';
+      return 'warm';
+    }
+    function filterFollowUpsType(type, btn) {
+      _fuPageType = type;
+      document.querySelectorAll('#fuPageFilterRow .fu-sub-btn').forEach(function (b) { b.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+      _renderFollowUps();
+    }
     function loadFollowUps() {
       google.script.run.withSuccessHandler(function (res) {
-        var due = res.due || [], upcoming = res.upcoming || [];
-        currentFollowUps = due.concat(upcoming);
-        var overdue = due.filter(function (f) { return f.overdue; }), today_ = due.filter(function (f) { return !f.overdue; });
-        document.getElementById('fuCntOv').textContent = overdue.length + ' متأخر';
-        document.getElementById('fuCntTd').textContent = today_.length + ' اليوم';
-        document.getElementById('fuCntUp').textContent = upcoming.length + ' قادم';
-        document.getElementById('fuBadge').textContent = due.length;
+        _fuRawDue = res.due || []; _fuRawUpcoming = res.upcoming || [];
+        _renderFollowUps();
+      }).getDueFollowUps(CU.id);
+    }
+    function _renderFollowUps() {
+      var applyType = function (list) { return _fuPageType === 'all' ? list : list.filter(function (f) { return _fuTypeOf(f) === _fuPageType; }); };
+      var due = applyType(_fuRawDue), upcoming = applyType(_fuRawUpcoming);
+      currentFollowUps = due.concat(upcoming);
+      var overdue = due.filter(function (f) { return f.overdue; }), today_ = due.filter(function (f) { return !f.overdue; });
+      document.getElementById('fuCntOv').textContent = overdue.length + ' متأخر';
+      document.getElementById('fuCntTd').textContent = today_.length + ' اليوم';
+      document.getElementById('fuCntUp').textContent = upcoming.length + ' قادم';
+      document.getElementById('fuBadge').textContent = (_fuRawDue || []).length;
+      var allItems = (_fuRawDue || []).concat(_fuRawUpcoming || []);
+      var cH = 0, cC = 0, cW = 0;
+      allItems.forEach(function (f) { var t = _fuTypeOf(f); if (t === 'hot') cH++; else if (t === 'cold') cC++; else cW++; });
+      document.getElementById('fuPgCnt-all').textContent = allItems.length;
+      document.getElementById('fuPgCnt-hot').textContent = cH;
+      document.getElementById('fuPgCnt-warm').textContent = cW;
+      document.getElementById('fuPgCnt-cold').textContent = cC;
+      (function () {
         function renderList(list, elId) {
           document.getElementById(elId).innerHTML = list.length ? list.map(function (f) {
             var agentTag = (CU && (CU.role === 'Manager' || CU.role === 'Operation' || CU.role === 'Senior Sales') && f.agentName && f.agentName !== '—') ? ' <span style="font-size:10px; color:var(--bm); font-weight:600; border:1px solid var(--border); padding: 1px 4px; border-radius:3px; background:var(--bg); margin-right:4px;">👤 ' + f.agentName + '</span>' : '';
@@ -7533,7 +7593,7 @@
           }).join('') : '<div class="empty-state" style="padding:20px"><p>لا يوجد</p></div>';
         }
         renderList(overdue, 'fuOverdue'); renderList(today_, 'fuToday'); renderList(upcoming, 'fuUpcoming');
-      }).getDueFollowUps(CU.id);
+      })();
     }
 
     // ============================================================
@@ -7586,7 +7646,7 @@
       var colspanVal = isAdm ? 8 : 7;
       document.getElementById('myLeadsBody').innerHTML = leads.length ? leads.map(function (l) {
         var agentTd = isAdm ? '<td>' + (l.agent || '—') + '</td>' : '';
-        return '<tr><td><span style="font-size:11px;color:var(--bm)">#' + l.id + '</span></td><td><strong>' + l.name + '</strong></td><td>' + l.phone + '</td><td>' + l.course + '</td>' + agentTd + '<td>' + badge(l.lastAction || l.status) + '</td><td>' + l.createdAt + '</td><td><div style="display:flex;gap:6px"><button class="btn-action-pill" onclick="setActiveClient(\'' + l.id + '\');goPage(\'log-call\')" title="تسجيل مكالمة"><i class="ti ti-phone"></i></button><button class="btn-action-pill" onclick="setActiveClient(\'' + l.id + '\');goPage(\'payment-gateway\')" title="رابط دفع"><i class="ti ti-credit-card"></i></button><button class="btn-action-pill" onclick="openEditLeadDetailsModal(\'' + l.id + '\')" title="تعديل تفاصيل العميل" style="color: var(--gold);"><i class="ti ti-edit"></i></button><button class="btn-action-pill" onclick="doDeleteLeadFromMyLeads(\'' + l.id + '\')" title="حذف العميل" style="color: #c04040;"><i class="ti ti-trash"></i></button></div></td></tr>';
+        return '<tr><td><span style="font-size:11px;color:var(--bm);white-space:nowrap;direction:ltr;display:inline-block">#' + l.id + '</span></td><td><strong>' + l.name + '</strong></td><td>' + l.phone + '</td><td>' + l.course + '</td>' + agentTd + '<td>' + badge(l.lastAction || l.status) + '</td><td>' + l.createdAt + '</td><td><div style="display:flex;gap:6px"><button class="btn-action-pill" onclick="setActiveClient(\'' + l.id + '\');goPage(\'log-call\')" title="تسجيل مكالمة"><i class="ti ti-phone"></i></button><button class="btn-action-pill" onclick="setActiveClient(\'' + l.id + '\');goPage(\'payment-gateway\')" title="رابط دفع"><i class="ti ti-credit-card"></i></button><button class="btn-action-pill" onclick="openEditLeadDetailsModal(\'' + l.id + '\')" title="تعديل تفاصيل العميل" style="color: var(--gold);"><i class="ti ti-edit"></i></button><button class="btn-action-pill" onclick="doDeleteLeadFromMyLeads(\'' + l.id + '\')" title="حذف العميل" style="color: #c04040;"><i class="ti ti-trash"></i></button></div></td></tr>';
       }).join('') : '<tr><td colspan="' + colspanVal + '" style="text-align:center;padding:30px;color:var(--bm)">لا يوجد عملاء</td></tr>';
     }
 
@@ -7696,7 +7756,7 @@
       if (status !== 'all') filtered = filtered.filter(function (l) { return (l.lastAction || l.status || '').includes(status); });
 
       var fuRow = document.getElementById('fuSubFilterRow');
-      if (status === 'Follow Up') {
+      if (['Follow Up', 'Delayed', 'Waiting Client'].indexOf(status) !== -1) {
         _fuFilteredLeads = filtered.slice();
         var cntHot = 0, cntCold = 0, cntWarm = 0;
         _fuFilteredLeads.forEach(function(l) {
@@ -7781,8 +7841,13 @@
         }
         var matchPhone = true;
         if (phoneFilter) {
-          var q = phoneFilter.trim();
-          matchPhone = (l.phone || '').toString().replace(/\s/g,'').indexOf(q) !== -1;
+          // طابق بالأرقام فقط + شيل الأصفار البادئة من الطرفين — يتعامل مع الصفر البادئ
+          // والشرطات والمسافات وكود الدولة، فالبحث بـ 1156216160 أو 01156216160 يلاقي نفس العميل.
+          var q = phoneFilter.replace(/\D/g,'').replace(/^0+/,'');
+          if (q) {
+            var ph = (l.phone || '').toString().replace(/\D/g,'').replace(/^0+/,'');
+            matchPhone = ph.indexOf(q) !== -1;
+          }
         }
         return matchDate && matchAgent && matchPhone;
       });
@@ -8023,9 +8088,31 @@
         if (status && (item.status || '').toLowerCase() !== status.toLowerCase()) return false;
         
         if (q) {
+          // 1) Match client name
           var nameMatch = (item.clientName || "").toLowerCase().indexOf(q) !== -1;
-          var phoneMatch = (item.phone || "").toLowerCase().indexOf(q) !== -1;
-          var ocMatch = (item.ocCode || "").toLowerCase().indexOf(q) !== -1;
+          
+          // 2) Normalized match for phone numbers (ignoring country code 20 and leading 0)
+          var phoneMatch = false;
+          var numQ = q.replace(/\D/g, '');
+          if (numQ) {
+            var cleanPhone = (item.phone || "").replace(/\D/g, '');
+            var normQ = numQ.startsWith('20') ? numQ.slice(2) : (numQ.startsWith('0') ? numQ.slice(1) : numQ);
+            var normPhone = cleanPhone.startsWith('20') ? cleanPhone.slice(2) : (cleanPhone.startsWith('0') ? cleanPhone.slice(1) : cleanPhone);
+            if (normQ && normPhone.indexOf(normQ) !== -1) {
+              phoneMatch = true;
+            }
+          }
+          
+          // 3) Match OC Code (either exact or just digits to allow searching without "OC-")
+          var ocMatch = false;
+          var cleanQ = q.replace(/[^a-z0-9]/g, '');
+          if (cleanQ) {
+            var normOC = (item.ocCode || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (normOC.indexOf(cleanQ) !== -1) {
+              ocMatch = true;
+            }
+          }
+          
           return nameMatch || phoneMatch || ocMatch;
         }
         return true;
@@ -10316,7 +10403,7 @@
     }
 
     function loadAdminUsers() {
-      document.getElementById('usersBody').innerHTML = '<tr><td colspan="6" class="loading-center"><span class="spinner"></span></td></tr>';
+      document.getElementById('usersBody').innerHTML = '<tr><td colspan="7" class="loading-center"><span class="spinner"></span></td></tr>';
       google.script.run.withSuccessHandler(function (pages) {
         ALL_PAGES_LIST = pages;
       }).getPages();
@@ -10331,7 +10418,7 @@
           var passLabel = u.password ? '<br><span style="font-size:11px;color:#7a624d;cursor:pointer;display:inline-flex;align-items:center;gap:3px;" onclick="copyCredentials(\'' + u.username + '\', \'' + u.password + '\')" title="نسخ بيانات الدخول"><i class="ti ti-key" style="font-size:11px;"></i> ' + u.password + ' <i class="ti ti-copy" style="font-size:11px;"></i></span>' : '';
           var userCell = '<div><strong>' + u.username + '</strong>' + passLabel + '</div>';
 
-          return '<tr><td><strong>' + u.name + '</strong><br><small style="color:var(--bm);font-size:10px;">ID: ' + u.id + '</small></td><td>' + userCell + '</td><td>' + roleBadge + '</td><td>' + stBadge + '</td><td><span style="font-size:11px;color:var(--bm)">' + pagesCount + '</span> <button class="btn btn-outline btn-sm" onclick="openEditPages(\'' + u.id + '\')"><i class="ti ti-edit"></i></button></td><td><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="doToggleUser(\'' + u.id + '\',' + !u.active + ')">' + (u.active ? '<i class="ti ti-lock"></i>' : '<i class="ti ti-lock-open"></i>') + '</button><button class="btn btn-outline btn-sm" onclick="doResetPass(\'' + u.id + '\')"><i class="ti ti-key"></i></button>' + (u.role !== 'Manager' ? '<button class="btn btn-danger btn-sm" onclick="doDeleteUser(\'' + u.id + '\')"><i class="ti ti-trash"></i></button>' : '') + '</div></td></tr>';
+          return '<tr><td><strong>' + u.name + '</strong><br><small style="color:var(--bm);font-size:10px;">ID: ' + u.id + '</small></td><td>' + userCell + '</td><td>' + roleBadge + '</td><td><div style="display:flex;gap:4px;align-items:center"><input type="email" id="uEmail_' + u.id + '" value="' + (u.email || '') + '" placeholder="gmail..." style="width:150px;font-size:11px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;direction:ltr"><button class="btn btn-outline btn-sm" title="حفظ الإيميل" onclick="saveUserEmail(\'' + u.id + '\')"><i class="ti ti-device-floppy"></i></button></div></td><td>' + stBadge + '</td><td><span style="font-size:11px;color:var(--bm)">' + pagesCount + '</span> <button class="btn btn-outline btn-sm" onclick="openEditPages(\'' + u.id + '\')"><i class="ti ti-edit"></i></button></td><td><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="doToggleUser(\'' + u.id + '\',' + !u.active + ')">' + (u.active ? '<i class="ti ti-lock"></i>' : '<i class="ti ti-lock-open"></i>') + '</button><button class="btn btn-outline btn-sm" onclick="doResetPass(\'' + u.id + '\')"><i class="ti ti-key"></i></button>' + (u.role !== 'Manager' ? '<button class="btn btn-danger btn-sm" onclick="doDeleteUser(\'' + u.id + '\')"><i class="ti ti-trash"></i></button>' : '') + '</div></td></tr>';
         }).join('');
         // build pages checkboxes for new user modal
         buildPagesCheckboxes('newUserPages', []);
@@ -10509,11 +10596,17 @@
         renderAdminLeads(leads);
       }).adminGetAllLeads(selectedMonth);
     }
+    function saveUserEmail(uid) {
+      var v = document.getElementById('uEmail_' + uid).value.trim();
+      google.script.run.withSuccessHandler(function (r) {
+        alert(r.success ? '✅ تم حفظ الإيميل' : ('خطأ: ' + r.message));
+      }).updateUserField(uid, 'email', v);
+    }
     function renderAdminLeads(leads) {
       document.getElementById('adminLeadsBody').innerHTML = (leads || []).slice(0, 1000).map(function (l) {
         var safeId = l.id.toString().replace(/'/g, "\\'");
         var safeName = (l.name || '').replace(/'/g, "\\'");
-        return '<tr><td><span style="font-size:11px;color:var(--bm)">#' + escHtml(l.id) + '</span></td><td><strong>' + escHtml(l.name) + '</strong></td><td>' + escHtml(l.phone) + '</td><td>' + escHtml(l.course) + '</td><td>' + escHtml(l.agent) + '</td><td>' + badge(l.lastAction || l.status) + '</td><td>' + escHtml(l.createdAt) + '</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">' +
+        return '<tr><td><span style="font-size:11px;color:var(--bm);white-space:nowrap;direction:ltr;display:inline-block">#' + escHtml(l.id) + '</span></td><td><strong>' + escHtml(l.name) + '</strong></td><td>' + escHtml(l.phone) + '</td><td>' + escHtml(l.course) + '</td><td>' + escHtml(l.agent) + '</td><td>' + badge(l.lastAction || l.status) + '</td><td>' + escHtml(l.createdAt) + '</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">' +
           '<button class="btn btn-outline btn-sm" title="تعديل" onclick="openEditClient(\'' + safeId + '\')" style="color:#1565c0;border-color:#1565c0"><i class="ti ti-edit"></i></button>' +
           '<button class="btn btn-outline btn-sm" title="نقل" onclick="openTransfer(\'' + safeId + '\')"><i class="ti ti-arrows-exchange"></i></button>' +
           '<button class="btn btn-outline btn-sm" title="أرشفة" onclick="doArchiveClient(\'' + safeId + '\',\'' + safeName + '\')" style="color:#e65100;border-color:#e65100"><i class="ti ti-archive"></i></button>' +
@@ -13327,7 +13420,22 @@
       }).getSystemSetting('brandLogoUrl', '');
     }
 
+    function _isManagerRole() {
+      return CU && ['manager', 'operation', 'admin'].indexOf((CU.role || '').toLowerCase().trim()) !== -1;
+    }
+    function onInvFreeToggle() {
+      var free = document.getElementById('invFree') && document.getElementById('invFree').checked;
+      ['invPrice', 'invPaid', 'invRemaining'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (free) { el.value = 0; el.readOnly = true; el.style.background = '#eef7ee'; }
+        else { el.readOnly = (id === 'invRemaining'); el.style.background = ''; }
+      });
+      if (free) calcRemaining();
+    }
     function onInvTypeChange() {
+      var freeRow = document.getElementById('invFreeRow');
+      if (freeRow) freeRow.style.display = _isManagerRole() ? 'block' : 'none';
       var finAction = document.getElementById('invFinAction') ? document.getElementById('invFinAction').value : 'Wait';
       var isRound = (finAction === 'Round');
       var roundSection = document.getElementById('invRoundSection');
@@ -13413,6 +13521,8 @@
       var attendanceDate = document.getElementById('invAttendance').value;
       var finAction = document.getElementById('invFinAction') ? document.getElementById('invFinAction').value : 'Wait';
       var clientType = document.getElementById('invClientType') ? document.getElementById('invClientType').value : 'New';
+      var isFree = !!(document.getElementById('invFree') && document.getElementById('invFree').checked);
+      if (isFree) { price = 0; paid = 0; remaining = 0; }
 
       var isRound = (finAction === 'Round');
       var bookingType = isRound ? 'round' : (finAction === 'Wait' ? 'waiting' : 'other');
@@ -13451,7 +13561,7 @@
         document.getElementById('invoiceResult').innerHTML = '<div class="alert alert-error">أدخل اسم الكورس</div>';
         return;
       }
-      if (!price) {
+      if (!price && !isFree) {
         document.getElementById('invoiceResult').innerHTML = '<div class="alert alert-error">أدخل السعر الإجمالي</div>';
         return;
       }
@@ -13464,14 +13574,22 @@
           document.getElementById('invoiceResult').innerHTML = '<div class="alert alert-success">' + res.message + '</div>';
           document.getElementById('invoicePreviewHtml').innerHTML = res.html;
           
-          // Reset the button to PNG download
+          // Reset the button to PDF download (named after the client's English name)
           var downloadBtn = document.querySelector('#modalInvoicePreview button.btn-primary');
           if (downloadBtn) {
-            downloadBtn.innerHTML = '<i class="ti ti-download"></i> تحميل الفاتورة (PNG)';
-            downloadBtn.onclick = downloadInvoicePng;
+            downloadBtn.innerHTML = '<i class="ti ti-download"></i> تحميل الفاتورة (PDF)';
+            downloadBtn.onclick = downloadInvoicePdf;
           }
           
           openModal('modalInvoicePreview');
+          // خزّن بيانات الفاتورة الحالية عشان الإرسال وإعادة الإرسال والتحميل
+          window._lastInvoice = {
+            invoiceId: res.invoiceId || '', clientName: clientName,
+            nameEn: nameEn || clientName, agentEmail: agentEmail
+          };
+          window._lastInvoiceNameEn = nameEn || clientName;
+          // ابعت الفاتورة بالإيميل كصورة PNG — نفس اللي ظاهر في المعاينة بالظبط
+          setTimeout(function () { sendInvoiceEmailFromPreview(); }, 700);
           clearInvoiceForm();
           loadFinancial();
           loadPayments();
@@ -13481,7 +13599,7 @@
       }).withFailureHandler(function (err) {
         isSubmittingDirectInvoice = false;
         document.getElementById('invoiceResult').innerHTML = '<div class="alert alert-error">❌ خطأ في الاتصال بالخادم: ' + err.toString() + '</div>';
-      }).createDirectInvoice(clientId, clientName, clientPhone, course, price, paid, remaining, method, offer, attendanceDate, nameEn, CU.id, CU.name, agentEmail, bookingType, roundId, roundName, nextDueDate, clientType, finAction);
+      }).createDirectInvoice(clientId, clientName, clientPhone, course, price, paid, remaining, method, offer, attendanceDate, nameEn, CU.id, CU.name, agentEmail, bookingType, roundId, roundName, nextDueDate, clientType, finAction, isFree);
     }
 
     var isGeneratingFormUrl = false;
@@ -13559,6 +13677,105 @@
         }
         document.getElementById('invoiceResult').innerHTML = '<div class="alert alert-error">❌ خطأ بالاتصال بالسيرفر: ' + err.message + '</div>';
       }).getInvoiceFormUrl(clientName, clientPhone, course, price, paid, remaining, method, offer, attendanceDate, nameEn, CU.id, CU.name, agentEmail, roundName, nextDueDate);
+    }
+
+    // رندر معزول في iframe مخفي (نفس منطق crm) عشان صفحة الـCRM ما تفشّلش html2canvas.
+    function _renderInvoiceCanvas(cb) {
+      var container = document.getElementById('invoicePreviewHtml');
+      var frag = container ? container.innerHTML : '';
+      if (!frag || typeof html2canvas === 'undefined') { cb(null, 'المعاينة غير جاهزة'); return; }
+      var ifr = document.createElement('iframe');
+      ifr.setAttribute('aria-hidden', 'true');
+      ifr.style.cssText = 'position:fixed;left:-10000px;top:0;width:840px;height:1250px;border:0;opacity:0;pointer-events:none;';
+      document.body.appendChild(ifr);
+      var cleanup = function () { try { document.body.removeChild(ifr); } catch (e) {} };
+      try {
+        var doc = ifr.contentDocument || ifr.contentWindow.document;
+        doc.open();
+        doc.write('<!doctype html><html dir="rtl"><head><meta charset="utf-8"></head><body style="margin:0">' + frag + '</body></html>');
+        doc.close();
+        var target = doc.querySelector('.inv-page') || doc.querySelector('.invoice-page') || doc.body;
+        var fp = (doc.fonts && doc.fonts.ready) ? doc.fonts.ready : Promise.resolve();
+        fp.then(function () { return new Promise(function (r) { setTimeout(r, 300); }); })
+          .then(function () { return html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }); })
+          .then(function (canvas) {
+            cleanup();
+            if (!canvas || !canvas.width || !canvas.height) { cb(null, 'فشل توليد صورة الفاتورة'); return; }
+            cb(canvas, null);
+          })
+          .catch(function (err) { cleanup(); cb(null, (err && err.toString()) || 'خطأ في توليد الصورة'); });
+      } catch (e) { cleanup(); cb(null, (e && e.toString()) || 'خطأ في تجهيز الفاتورة'); }
+    }
+
+    function sendInvoiceEmailFromPreview() {
+      var inv = window._lastInvoice;
+      var el = document.getElementById('invEmailStatus');
+      if (!inv || !inv.agentEmail) {
+        if (el) { el.style.color = '#c62828'; el.innerHTML = '⚠️ مفيش إيميل للسيلز — الفاتورة اتسجلت من غير إرسال'; }
+        return;
+      }
+      if (el) { el.style.color = '#7a624d'; el.innerHTML = '📤 جاري إرسال الفاتورة على الإيميل...'; }
+      _renderInvoiceCanvas(function (canvas, err) {
+        if (!canvas) {
+          if (el) { el.style.color = '#c62828'; el.innerHTML = '❌ فشل تجهيز صورة الفاتورة: ' + err + ' — اضغط «إعادة إرسال الإيميل»'; }
+          return;
+        }
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+        var pdfB64 = '', pdfName = 'Invoice - ' + inv.nameEn + '.pdf';
+        try {
+          if (window.jspdf && window.jspdf.jsPDF) {
+            var pdf = new window.jspdf.jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+            pdf.addImage(dataUrl, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+            pdfB64 = pdf.output('datauristring');
+          }
+        } catch (e) {}
+        google.script.run.withSuccessHandler(function (r) {
+          var el2 = document.getElementById('invEmailStatus');
+          if (!el2) return;
+          if (r && r.success) {
+            el2.style.color = '#1b5e20';
+            el2.innerHTML = '✅ تم إرسال الفاتورة على: ' + inv.agentEmail + ' 📧';
+          } else {
+            el2.style.color = '#c62828';
+            el2.innerHTML = '❌ فشل إرسال الإيميل: ' + ((r && r.message) || 'خطأ غير معروف') + ' — اضغط «إعادة إرسال الإيميل»';
+          }
+        }).withFailureHandler(function (e) {
+          var el2 = document.getElementById('invEmailStatus');
+          if (el2) { el2.style.color = '#c62828'; el2.innerHTML = '❌ فشل الاتصال بالسيرفر: ' + e + ' — اضغط «إعادة إرسال الإيميل»'; }
+        }).emailInvoicePng(inv.invoiceId, (inv.nameEn || inv.clientName), inv.agentEmail, dataUrl, pdfB64, pdfName);
+      });
+    }
+
+    function resendInvoiceEmail() {
+      if (!window._lastInvoice) { alert('لا توجد فاتورة حالية لإعادة إرسالها'); return; }
+      sendInvoiceEmailFromPreview();
+    }
+
+    function downloadInvoicePdf() {
+      var btn = document.querySelector('#modalInvoicePreview button.btn-primary');
+      var originalHtml = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner" style="width:10px; height:10px; display:inline-block; border-color:#fff; border-top-color:transparent;"></span> جاري التحضير...';
+      }
+      _renderInvoiceCanvas(function (canvas, err) {
+        if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+        if (!canvas) { alert('❌ حدث خطأ أثناء تحميل الفاتورة: ' + err); return; }
+        var name = window._lastInvoiceNameEn || 'invoice';
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        if (window.jspdf && window.jspdf.jsPDF) {
+          var pdf = new window.jspdf.jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+          pdf.addImage(dataUrl, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+          pdf.save('Invoice - ' + name + '.pdf');
+        } else {
+          var link = document.createElement('a');
+          link.download = 'Invoice - ' + name + '.jpg';
+          link.href = dataUrl;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      });
     }
 
     function downloadInvoicePng() {
@@ -14335,7 +14552,7 @@
     }
 
     function showGlobalQR() {
-      var portalUrl = 'https://b-s-a.co/portal-academy-student/?attend=AUTO';
+      var portalUrl = 'https://portal.b-s-a.co/academy-student/?attend=AUTO';
       var qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&format=png&data=' + encodeURIComponent(portalUrl);
       var activeSess = Object.values(window._activeSessions || {});
       var subtitle = activeSess.length
@@ -16122,7 +16339,7 @@
         .getBatchCredentials(roundId);
     }
 
-    var PORTAL_URL = 'https://b-s-a.co/portal-academy-student/';
+    var PORTAL_URL = 'https://portal.b-s-a.co/academy-student/';
     var _allStudentsCache = [];
 
     // Auto-fill username from name field
@@ -16815,7 +17032,7 @@
       if (!phone) { _showToast('⚠️ لا يوجد رقم واتساب للمحاضر'); return; }
       var msg = 'مرحباً ' + name + ' 👋\n\n'
         + 'تم إنشاء حسابك على منصة BSA Academy كمحاضر.\n\n'
-        + '🔗 رابط البوابة:\nhttps://b-s-a.co/portal-academy-student/\n\n'
+        + '🔗 رابط البوابة:\nhttps://portal.b-s-a.co/academy-student/\n\n'
         + '👤 اسم المستخدم: ' + username + '\n'
         + '🔐 كلمة المرور: ' + password + '\n\n'
         + 'يسعدنا انضمامك لفريق BSA 🏛️';

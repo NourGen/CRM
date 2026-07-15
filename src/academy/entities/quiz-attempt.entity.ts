@@ -32,4 +32,7 @@ export class QuizAttempt {
 
   @Column({ type: 'varchar', nullable: true })
   status: string;
+
+  @Column({ name: 'answers_json', type: 'simple-json', nullable: true })
+  answersJson: any;
 }

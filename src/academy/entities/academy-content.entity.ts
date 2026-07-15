@@ -40,6 +40,12 @@ export class AcademyContent {
   @Column({ type: 'text', nullable: true })
   notes: string;
 
+  @Column({ name: 'instructor_tag', type: 'varchar', nullable: true })
+  instructorTag: string;
+
+  @Column({ name: 'pdf_file_id', type: 'varchar', nullable: true })
+  pdfFileId: string;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
   createdAt: Date;
 }

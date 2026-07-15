@@ -24,6 +24,8 @@ import { AcademyNotification } from './entities/academy-notification.entity';
 import { AcademyFriend } from './entities/academy-friend.entity';
 import { SuccessStory } from './entities/success-story.entity';
 import { ShowcaseProject } from './entities/showcase-project.entity';
+import { AcademySession } from './entities/academy-session.entity';
+import { BsaOrientation } from './entities/bsa-orientation.entity';
 import { AcademyService } from './academy.service';
 import { AcademyController } from './academy.controller';
 
@@ -54,6 +56,8 @@ import { AcademyController } from './academy.controller';
       AcademyFriend,
       SuccessStory,
       ShowcaseProject,
+      AcademySession,
+      BsaOrientation,
     ]),
   ],
   providers: [AcademyService],

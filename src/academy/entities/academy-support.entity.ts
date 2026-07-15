@@ -30,4 +30,13 @@ export class AcademySupport {
 
   @Column({ name: 'created_at', type: 'timestamp', nullable: true })
   createdAt: Date;
+
+  @Column({ name: 'admin_reply', type: 'text', nullable: true })
+  adminReply: string;
+
+  @Column({ name: 'replied_at', type: 'timestamp', nullable: true })
+  repliedAt: Date;
+
+  @Column({ name: 'image_url', type: 'varchar', nullable: true })
+  imageUrl: string;
 }

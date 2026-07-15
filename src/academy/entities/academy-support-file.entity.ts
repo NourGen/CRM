@@ -39,4 +39,8 @@ export class AcademySupportFile {
 
   @Column({ name: 'created_by', type: 'varchar', nullable: true })
   createdBy: string;
+
+  // Instructor grouping for CRM-managed support files (old CRM sheet stored files per instructor tag)
+  @Column({ name: 'instructor_tag', type: 'varchar', nullable: true })
+  instructorTag: string;
 }

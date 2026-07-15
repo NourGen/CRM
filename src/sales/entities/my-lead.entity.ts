@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany, Generated } from 'typeorm';
 import { User } from './user.entity';
 import { LeadCallLog } from './lead-call-log.entity';
 
@@ -6,6 +6,12 @@ import { LeadCallLog } from './lead-call-log.entity';
 export class MyLead {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  // Permanent, sequential, human-facing client number — DB-native AUTO_INCREMENT, never reused even after deletes.
+  // Internal relations still use `id` (uuid); this is purely the display/reference identifier.
+  @Column({ name: 'client_number', type: 'int', unique: true })
+  @Generated('increment')
+  clientNumber: number;
 
   @Column({ name: 'legacy_id', type: 'varchar', nullable: true, unique: true })
   legacyId: string;

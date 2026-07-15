@@ -35,7 +35,7 @@ export class QuizBank {
   optionD: string;
 
   @Column({ type: 'integer', nullable: true })
-  correct: number; // 1-4
+  correct: number; // 0-based index (sheet's "Correct (1-4)" minus 1)
 
   @Column({ type: 'text', nullable: true })
   notes: string;

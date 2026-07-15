@@ -20,11 +20,14 @@ export class Instructor {
   @Column({ type: 'boolean', default: true })
   active: boolean;
 
-  @Column({ name: 'profile_pic', type: 'varchar', nullable: true })
-  profilePic: string;
+  @Column({ name: 'profile_pic', type: 'mediumtext', nullable: true })
+  profilePic: string; // base64 data-URI avatars from the legacy sheet — far larger than varchar(255)
 
   @Column({ name: 'is_bsa', type: 'boolean', default: false })
   isBsa: boolean;
+
+  @Column({ type: 'varchar', nullable: true })
+  phone: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
   createdAt: Date;

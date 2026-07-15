@@ -26,6 +26,10 @@ export class User {
   @Column({ type: 'simple-json', nullable: true })
   permissions: string[];
 
+  // Personal Gmail — invoices issued by this user are auto-emailed here
+  @Column({ type: 'varchar', nullable: true })
+  email: string;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
   createdAt: Date;
 }

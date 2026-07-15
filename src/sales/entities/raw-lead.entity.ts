@@ -1,10 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Generated } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity('raw_leads')
 export class RawLead {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  // Permanent, sequential, human-facing client number — DB-native AUTO_INCREMENT, never reused even after deletes.
+  // Internal relations still use `id` (uuid); this is purely the display/reference identifier.
+  @Column({ name: 'client_number', type: 'int', unique: true })
+  @Generated('increment')
+  clientNumber: number;
 
   @Column({ name: 'legacy_id', type: 'varchar', nullable: true })
   legacyId: string;

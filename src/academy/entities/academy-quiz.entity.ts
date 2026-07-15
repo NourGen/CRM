@@ -33,6 +33,9 @@ export class AcademyQuiz {
   @Column({ name: 'pass_score', type: 'integer', nullable: true })
   passScore: number;
 
+  @Column({ name: 'quiz_size', type: 'integer', nullable: true })
+  quizSize: number;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
   createdAt: Date;
 }
