@@ -2133,10 +2133,16 @@ export class GasService implements OnModuleInit {
 
       // Mirror into Financial_Data so monthly sales accounting sees the installment
       try {
+        const fullPayment = await this.clientPaymentRepository.findOne({
+          where: { id: payment.id },
+          relations: { agent: true }
+        });
+        const origAgent = (fullPayment && fullPayment.agent) || (payment.agentLegacyId ? await this.userRepository.findOne({ where: { legacyId: payment.agentLegacyId } }) : null);
+
         await this.financialDataRepository.save({
-          agent: agent || null,
-          agentLegacyId: agent?.legacyId || null,
-          agentName: agentName || payment.agentUsername || '',
+          agent: origAgent || null,
+          agentLegacyId: origAgent?.legacyId || payment.agentLegacyId || null,
+          agentName: origAgent?.name || payment.agentUsername || '',
           month: new Date().getMonth() + 1,
           year: new Date().getFullYear(),
           type: 'payment',
@@ -2146,7 +2152,7 @@ export class GasService implements OnModuleInit {
           paid: amt,
           createdAt: new Date(),
         });
-      } catch { /* accounting mirror is best-effort */ }
+      } catch (err) { /* accounting mirror is best-effort */ }
 
       await this.logActivity(agentId, agentName, 'INSTALLMENT', `${payment.legacyId || payment.id} - ${amt} EGP`);
       return { success: true, message: '✅ تم تسجيل القسط وتحديث حسابات السيلز' };

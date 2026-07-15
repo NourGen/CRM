@@ -6164,14 +6164,20 @@ function _fpUploadNextChunk(btn, msgEl){
 // Modal viewer for files (outline + submitted project)
 function _fpShowFileModal(fileId){
   if(!fileId) return;
+  var isLocal = fileId.startsWith('/uploads/');
+  var srcUrl = isLocal ? fileId : 'https://drive.google.com/file/d/'+fileId+'/preview';
+
   var modal=document.createElement('div');
   modal.setAttribute('data-fp-modal','1');
   modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;display:flex;flex-direction:column;padding:16px;gap:12px';
   modal.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0">'
-    +'<h3 style="color:#fff;margin:0;font-family:\'Cairo\',sans-serif;font-size:16px">👁 عرض الملف</h3>'
-    +'<button onclick="document.querySelector(\'[data-fp-modal]\').remove()" style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:\'Cairo\',sans-serif;font-size:13px">✕ إغلاق</button>'
+    +'<h3 style="color:#fff;margin:0;font-family:\'Cairo\',sans-serif;font-size:16px">معاينة الملف</h3>'
+    +'<div style="display:flex;gap:8px">'
+    +'<a href="'+srcUrl+'" target="_blank" style="background:var(--gold);color:var(--dark);text-decoration:none;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:\'Cairo\',sans-serif;font-size:13px;font-weight:700;display:inline-flex;align-items:center">🔗 فتح في نافذة جديدة</a>'
+    +'<button onclick="document.querySelector(\'[data-fp-modal]\').remove()" style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:\'Cairo\',sans-serif;font-size:13px">إغلاق</button>'
     +'</div>'
-    +'<iframe src="https://drive.google.com/file/d/'+fileId+'/preview" style="flex:1;border:none;border-radius:12px;background:#1a1208;min-height:0" allow="autoplay"></iframe>';
+    +'</div>'
+    +'<iframe src="'+srcUrl+'" style="flex:1;border:none;border-radius:12px;background:#1a1208;min-height:0" allow="autoplay"></iframe>';
   document.body.appendChild(modal);
   modal.addEventListener('click',function(e){ if(e.target===modal) modal.remove(); });
 }
